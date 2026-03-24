@@ -16,9 +16,9 @@ def create_table(): # Only the dictionary will be changed/edited, the table crea
 
 def color(seat_status): # Colors a seat's character depending on status
     if seat_status == "F":
-        return "[green]F[/green]" # Color indicates available, Free
+        return "[green1]F[/green1]" # Color indicates available, Free
     elif seat_status == "R":
-        return "[red]R[/red]" # Color indicates unavailable, reserved
+        return "[bright_red]R[/bright_red]" # Color indicates unavailable, reserved
     elif seat_status == "X":
         return "[grey37]X[/grey37]" # Color indicates grey, ignore
     elif seat_status == "S":
@@ -38,12 +38,21 @@ def free():
 
 
 def status(): # Check status of seats that are free or reserved or aisles or storage spaces
-    table_columns = ["Row", "A", "B", "C", "X", "D", "E", "F"] # These are the columns for our aircraft and seating table
+    table_columns = ["  A", "B", "C", "X", "D", "E", "F"] # These are the columns for our aircraft and seating table
     seats_table = create_table() # Calls the function for creating/updating our table that reflects our dictionary (initalized later in code, position follows PEP 8 mostly, so I am sorry about that)
 
-    print("\n", tbl.tabulate(seats_table, headers = table_columns, tablefmt = "plain", stralign = "center"), "\n") # Create our table and output it to the terminal
-    for indicator in indicate: # Print list of indicators for information
-        print(indicator)
+    # Create/Output the seven headers, (A - F) including X -> Aisle
+    print("\n", *table_columns, "\n")
+
+    for row in seats_table: # Iterate through each created row of our seating table
+        print(f"{row[0]:02}", row[1], row[2], row[3], row[4], row[5], row[6], row[7]) # Creating/Printing the Burak 757 aircraft seating layout plan
+
+    print("\n") # New line, to make sure output is neat in terminal
+
+    for i, indicator in enumerate(indicate, start = 1): # Print list of indicators for information about the aircraft's seats
+        print(i, indicator) # Prints a character and what it corresponds to
+
+
 
 # Intializing a dictionary to call functions depending on user input
 ability = {'1' : check, # calls check()
@@ -61,12 +70,18 @@ def run(): # The run() function does not take any argument or return any value w
 
         choice = input("\n" + message["enter"]).strip() # Strip spaces to ensure input is compatible
 
-        # If user input of chosen list item number is 1 to 4, call a function depending on the key value (abilty dictionary)
-        if 1 <= int(choice) <= len(ability): # String value must be turned to an integer for this if statement
-            ability[choice]() # If true -> call the function based on the key's value
-            continue
+        try: # Try converting input into an integer, to make sure it is valid
+            choice = int(choice) # Try converting the user input for item choice into an integer
+        except ValueError: # If it fails, then allow them to try again and inform them properly
+            print("\n" + error["invalid"] + ' ' + "[red]Please enter a number (1 - 5)[/red]") # Error and explanation
+            continue # Restarts the while loop from the beginning   
 
-        elif choice == '5': # If 5 is inputted, then the user wishes to exit
+        # If user input of chosen list item number is 1 to 4, call a function depending on the key value (abilty dictionary)
+        if 1 <= choice <= len(ability): # String value must be turned to an integer in the accepted range for this if statement
+            ability[str(choice)]() # If true -> call the function based on the key's value, except we need a string value so we used str() to access dictionary indexing. Alternatively, we could remove quotes from the keys
+            continue # Go back to the menu, which restarts the current while loop
+
+        elif choice == 5: # If 5 is inputted, then the user wishes to exit
             print("\n" + message["goodbye"])
             break # Exit out of the while loop and end the program
         else: # If input is invalid, let user know and go through the while loop again

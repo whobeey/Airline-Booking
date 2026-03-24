@@ -12,12 +12,12 @@ option = {"check": "[green]Check availability of seats[/green]",
           "book": "[blue]Enter seat booking[/blue]",
           "free": "[yellow]Free booked seats[/yellow]",
           "status": "[orange1]Show seat booking status[/orange1]",
-          "exit": "[red]Exit the program[/red]"}
+          "exit": "[bright_red]Exit the program[/bright_red]"}
 
 # A dictionary to store strings that are options/messages to be displayed terminal output
 error = {"invalid": "[red]ERROR: Invalid user input.[/red]"}
 
-indicate = ["[green]\'F\' -> Free to book[/green]",
-            "[red]\'R\' -> Reserved[/red]",
+indicate = ["[green1]\'F\' -> Free to book[/green1]",
+            "[bright_red]\'R\' -> Reserved[/bright_red]",
             "[grey37]\'X\' -> Aisle Row[/grey37]",
-            "[white]\'S\' -> Aircraft Storage[/white]", ]
+            "[white]\'S\' -> Aircraft Storage[/white]"]
