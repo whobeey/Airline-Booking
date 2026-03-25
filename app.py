@@ -1,5 +1,26 @@
-# Import this module which contains import statements and a collection of messages
-from const import * 
+from rich import print # Allows more cognition and comprehensibility for users (Colors for seat type)
+
+# A dictionary to store simple messages that are available to be displayed in terminal output
+message = {"welcome" : "Welcome to the Apache Airlines booking system!",
+           "enter" : "Enter your Selection (list number): ",
+           "goodbye" : "Goodbye valued customer!"}
+
+
+# A dictionary to store strings that are options/messages to be displayed terminal output
+option = {"check": "[green]Check availability of seats[/green]",
+          "book": "[blue]Enter seat booking[/blue]",
+          "free": "[yellow]Free booked seats[/yellow]",
+          "status": "[orange1]Show seat booking status[/orange1]",
+          "exit": "[bright_red]Exit the program[/bright_red]"}
+
+# A dictionary to store strings that are options/messages to be displayed terminal output
+error = {"invalid": "[red]ERROR: Invalid user input.[/red]"}
+
+# A dictionary to indicate what a character stands for, color too*
+indicate = ["[green1]\'F\' -> Free to book[/green1]",
+            "[bright_red]\'R\' -> Reserved[/bright_red]",
+            "[grey37]\'X\' -> Aisle Row[/grey37]",
+            "[white]\'S\' -> Aircraft Storage[/white]"]
 
 # This function will create a table showing seating plan of the Burak 757 Aircraft, reflects later dictionary content
 def create_table(): # Only the dictionary will be changed/edited, the table created only reflects*
@@ -8,7 +29,7 @@ def create_table(): # Only the dictionary will be changed/edited, the table crea
     for row in range(1, 80 + 1): # Iterating for 80. We add 1 to the argument of range() to ensure there are 80 because of Python's indexing method
         seats_table.append([row, # The current row, from iteration argument given (range(1, 80 + 1))
                             color(seats[row]["A"]), color(seats[row]["B"]),
-                            color(seats[row]["C"]), color(seats[row]["X"]), # Note that what is marked as Mark 'X' will never be available, just like 'S'/storage
+                            color(seats[row]["C"]), color(seats[row]["X"]), # Note that what will eventually be marked as 'X' will never be available, just like 'S'/storage
                             color(seats[row]["D"]), color(seats[row]["E"]),
                             color(seats[row]["F"])]) 
 
@@ -42,7 +63,38 @@ def check(): # Check status of seats that are free or reserved or aisles or stor
         print(i, indicator) # Prints a character and what it corresponds to.
 
 def book(): # This function will allow users to book a seat that is free 'F'
-    pass
+    seat_code = input("\nEnter seat to book (e.g. 12A): ").strip().upper()
+
+    if len(seat_code) < 2:
+        print("\n" + error["invalid"] + " [red]Please enter a valid seat like '12A'.[/red]")
+        return
+
+    row_text = seat_code[:-1]
+    column = seat_code[-1]
+
+    if not row_text.isdigit():
+        print("\n" + error["invalid"] + " [red]Row must be a number (1-80).[/red]")
+        return
+
+    row = int(row_text)
+    if row < 1 or row > 80 or column not in ["A", "B", "C", "D", "E", "F", "X"]:
+        print("\n" + error["invalid"] + " [red]Seat must be 1-80 and column A-F (aisles are X).[/red]")
+        return
+
+    current = seats[row][column]
+
+    if current == "F":
+        seats[row][column] = "R"
+        print(f"\n[green]Seat {row}{column} is now booked successfully![/green]")
+    elif current == "R":
+        print(f"\n[yellow]Seat {row}{column} is already booked (R).[/yellow]")
+    elif current == "X":
+        print(f"\n[grey37]Seat {row}{column} is an aisle (X) and cannot be booked.[/grey37]")
+    elif current == "S":
+        print(f"\n[white]Seat {row}{column} is aircraft storage (S) and cannot be booked.[/white]")
+    else:
+        print(f"\n{error['invalid']} [red]Unknown seat status '{current}'.[/red]")
+
 
 def free(): # This function will allow users to free a seat that was booked, marked 'R'
     pass
@@ -100,7 +152,7 @@ for row in range(1, 80 + 1): # Iterating for 80. We add 1 to the argument of ran
         if column == "X": # While iterating through columns, when at 'X' create
             seats[row][column] = "X"  # 'X' -> These are aisle spaces and they are never bookable
 
-        elif 70 < row <= 75: # the rows 71, 72, 73, 74 and 75 are storage areas inside of the aircraft 
+        elif 77 <= row <= 78 and column in ["D", "E", "F"]: # rows 77 and 78 in D/E/F are storage
             seats[row][column] = "S"  # 'S' -> These are designated & unbookable storage areas in the aircraft
 
         else: # If no condition applies, set the rest as free seats available for consumer booking
