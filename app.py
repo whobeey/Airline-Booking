@@ -26,18 +26,7 @@ def color(seat_status): # Colors a seat's character depending on status
 
     return seat_status # Returns a colored character for status
 
-def check():
-    pass
-
-def book():
-    pass
-
-def free():
-    pass
-
-
-
-def status(): # Check status of seats that are free or reserved or aisles or storage spaces
+def check(): # Check status of seats that are free or reserved or aisles or storage spaces
     table_columns = ["  A", "B", "C", "X", "D", "E", "F"] # These are the columns for our aircraft and seating table
     seats_table = create_table() # Calls the function for creating/updating our table that reflects our dictionary (initalized later in code, position follows PEP 8 mostly, so I am sorry about that)
 
@@ -50,9 +39,17 @@ def status(): # Check status of seats that are free or reserved or aisles or sto
     print("\n") # New line, to make sure output is neat in terminal
 
     for i, indicator in enumerate(indicate, start = 1): # Print list of indicators for information about the aircraft's seats
-        print(i, indicator) # Prints a character and what it corresponds to
+        print(i, indicator) # Prints a character and what it corresponds to.
 
+def book(): # This function will allow users to book a seat that is free 'F'
+    pass
 
+def free(): # This function will allow users to free a seat that was booked, marked 'R'
+    pass
+
+def status(): # This function display the seating plan for the aircraft and it also provides a list of the user's booked seats
+    pass
+    
 
 # Intializing a dictionary to call functions depending on user input
 ability = {'1' : check, # calls check()
