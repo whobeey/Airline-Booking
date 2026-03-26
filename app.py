@@ -62,38 +62,44 @@ def check(): # Check status of seats that are free or reserved or aisles or stor
     for i, indicator in enumerate(indicate, start = 1): # Print list of indicators for information about the aircraft's seats
         print(i, indicator) # Prints a character and what it corresponds to.
 
-def book(): # This function will allow users to book a seat that is free 'F'
-    seat_code = input("\nEnter seat to book (e.g. 12A): ").strip().upper()
+def book(): # This function will allow users to book a seat that is free 'F', replaced after booking with 'R'
+    while True: # Loop through code below until otherwise when everything goes accordingly right without user error
+        seat_location = input("\n" + "Enter a location of a free seat to book it (example: 1A - 80F): ").strip().upper() # Format input by removing additional spaces and capitalizing characters
 
-    if len(seat_code) < 2:
-        print("\n" + error["invalid"] + " [red]Please enter a valid seat like '12A'.[/red]")
-        return
+        if len(seat_location) not in [2, 3]: # Seat location might be two characters like "2B" or three characters like "48E"
+            print("\n" + error["invalid"] + " [red]Please enter a valid seat like '12A'.[/red]") # Inform the user about their error and 
+            continue # Restart loop to give the user another try
 
-    row_text = seat_code[:-1]
-    column = seat_code[-1]
+        row_text = seat_location[:-1]
+        column = seat_location[-1]
 
-    if not row_text.isdigit():
-        print("\n" + error["invalid"] + " [red]Row must be a number (1-80).[/red]")
-        return
+        if not row_text.isdigit() or column not in ["A", "B", "C", "D", "E", "F", "X"]:
+            print("\n" + error["invalid"] + " [red]Seat must be row 1-80 + column A-F (X is aisle).[/red]")
+            continue
 
-    row = int(row_text)
-    if row < 1 or row > 80 or column not in ["A", "B", "C", "D", "E", "F", "X"]:
-        print("\n" + error["invalid"] + " [red]Seat must be 1-80 and column A-F (aisles are X).[/red]")
-        return
+        row = int(row_text)
+        if row < 1 or row > 80:
+            print("\n" + error["invalid"] + " [red]Row must be between 1 and 80.[/red]")
+            continue
 
-    current = seats[row][column]
+        current = seats[row][column]
 
-    if current == "F":
-        seats[row][column] = "R"
-        print(f"\n[green]Seat {row}{column} is now booked successfully![/green]")
-    elif current == "R":
-        print(f"\n[yellow]Seat {row}{column} is already booked (R).[/yellow]")
-    elif current == "X":
-        print(f"\n[grey37]Seat {row}{column} is an aisle (X) and cannot be booked.[/grey37]")
-    elif current == "S":
-        print(f"\n[white]Seat {row}{column} is aircraft storage (S) and cannot be booked.[/white]")
-    else:
-        print(f"\n{error['invalid']} [red]Unknown seat status '{current}'.[/red]")
+        if current == "F":
+            seats[row][column] = "R"
+            print(f"\n[green]Seat {row}{column} is now booked successfully![/green]")
+            return
+        elif current == "R":
+            print(f"\n[yellow]Seat {row}{column} is already booked (R).[/yellow]")
+            continue
+        elif current == "X":
+            print(f"\n[grey37]Seat {row}{column} is an aisle (X) and cannot be booked.[/grey37]")
+            continue
+        elif current == "S":
+            print(f"\n[white]Seat {row}{column} is aircraft storage (S) and cannot be booked.[/white]")
+            continue
+        else:
+            print(f"\n{error['invalid']} [red]Unknown seat status '{current}'.[/red]")
+            continue
 
 
 def free(): # This function will allow users to free a seat that was booked, marked 'R'
