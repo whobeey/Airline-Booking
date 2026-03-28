@@ -1,5 +1,14 @@
 from rich import print # Allows more cognition and comprehensibility for users (Colors for seat type)
 
+"""
+Please note the following:
+
+Comments that are incomplete (example: # COMMENT...)
+have already been explained multiple times in previous following lines of code
+
+Thank you.
+"""
+
 # A dictionary to store simple messages that are available to be displayed in terminal output
 message = {"welcome" : "Welcome to the Apache Airlines booking system!",
            "enter" : "Enter your Selection (list number): ",
@@ -21,6 +30,8 @@ indicate = ["[green1]\'F\' -> Free to book[/green1]",
             "[bright_red]\'R\' -> Reserved[/bright_red]",
             "[grey37]\'X\' -> Aisle Row[/grey37]",
             "[white]\'S\' -> Aircraft Storage[/white]"]
+
+user_seats = {} # Dictionary that contains the seats the user has booked and location.
 
 # This function will create a table showing seating plan of the Burak 757 Aircraft, reflects later dictionary content
 def create_table(): # Only the dictionary will be changed/edited, the table created only reflects*
@@ -47,7 +58,7 @@ def color(seat_status): # Colors a seat's character depending on status
 
     return seat_status # Returns a colored character for status
 
-def check(): # Check status of seats that are free or reserved or aisles or storage spaces
+def status(): # Check status of seats that are free or reserved or aisles or storage spaces
     table_columns = ["  A", "B", "C", "X", "D", "E", "F"] # These are the columns for our aircraft and seating table
     seats_table = create_table() # Calls the function for creating/updating our table that reflects our dictionary (initalized later in code, position follows PEP 8 mostly, so I am sorry about that)
 
@@ -60,54 +71,92 @@ def check(): # Check status of seats that are free or reserved or aisles or stor
     print("\n") # New line, to make sure output is neat in terminal
 
     for i, indicator in enumerate(indicate, start = 1): # Print list of indicators for information about the aircraft's seats
-        print(i, indicator) # Prints a character and what it corresponds to.
+        print(i, indicator) # Prints a character and what it corresponds to. 
 
 def book(): # This function will allow users to book a seat that is free 'F', replaced after booking with 'R'
     while True: # Loop through code below until otherwise when everything goes accordingly right without user error
-        seat_location = input("\n" + "Enter a location of a free seat to book it (example: 1A - 80F): ").strip().upper() # Format input by removing additional spaces and capitalizing characters
+        seat_location = input("\n" + "Please enter the seat number (1A - 80F) or 'X' to exit: ").strip().upper() # Variable string used for booking a specific seat, it utilizes methods for clean proper neat input
 
-        if len(seat_location) not in [2, 3]: # Seat location might be two characters like "2B" or three characters like "48E"
-            print("\n" + error["invalid"] + " [red]Please enter a valid seat like '12A'.[/red]") # Inform the user about their error and 
-            continue # Restart loop to give the user another try
+        if seat_location == "X": # Check if the user wishes to exit
+            print("\n" + "[red]Exiting booking page...[/red]" + "[red]Returning to menu...[/red]") # Inform user about the exit process
+            break # Breaks out of the while loop
 
-        row_text = seat_location[:-1]
-        column = seat_location[-1]
+        if len(seat_location) not in (2, 3): # If the string length of the string is less than two characters or more it is un-acceptable 
+            print("\n" + error["invalid"] + "\n" + " [red]Please enter a seat number like 1A or 80F[/red]") # Inform about error
+            continue # Continues the while loop / Restarts to allow the user to try again
 
-        if not row_text.isdigit() or column not in ["A", "B", "C", "D", "E", "F", "X"]:
-            print("\n" + error["invalid"] + " [red]Seat must be row 1-80 + column A-F (X is aisle).[/red]")
-            continue
+        row_text = seat_location[:-1] # User input is a string which can be seen as a series or list of characters in an order, this gets every character except the last, just to get row number
+        column_text = seat_location[-1] # Which means if we have three characters and the third is the column and last character, we can use -1 to grab the last character needed for this operation
 
-        row = int(row_text)
-        if row < 1 or row > 80:
-            print("\n" + error["invalid"] + " [red]Row must be between 1 and 80.[/red]")
-            continue
+        if not row_text.isdigit(): # If it cannot be used as an integer or float then it is unusable in our operation
+            print("\n" + error["invalid"] + " " + "[red]Row input must be a number[/red]") # inform user...
+            continue # Continues the while loop / Restarts to allow the user to try again
 
-        current = seats[row][column]
+        row_text = int(row_text) # User input of row number is a string, we can turn
 
-        if current == "F":
-            seats[row][column] = "R"
-            print(f"\n[green]Seat {row}{column} is now booked successfully![/green]")
-            return
-        elif current == "R":
-            print(f"\n[yellow]Seat {row}{column} is already booked (R).[/yellow]")
-            continue
-        elif current == "X":
-            print(f"\n[grey37]Seat {row}{column} is an aisle (X) and cannot be booked.[/grey37]")
-            continue
-        elif current == "S":
-            print(f"\n[white]Seat {row}{column} is aircraft storage (S) and cannot be booked.[/white]")
-            continue
-        else:
-            print(f"\n{error['invalid']} [red]Unknown seat status '{current}'.[/red]")
-            continue
+        if not (1 <= row_text <= 80): # Check if the seat number entered is valid and can exist in the aircraft.
+            print("\n" + error["invalid"] + " " + "[red]Row must be in or between 1 – 80[/red]") # inform user...
+            continue # Continues the while loop / Restarts to allow the user to try again
+
+        if column_text not in ["A", "B", "C", "X", "D", "E", "F"]: # Check if the column entered is valid and can exist in the aircraft.
+            print("\n" + error["invalid"] + " " + "[red]Invalid column input, please try again[/red]") # Inform user about error...
+            continue # Continues the while loop / Restarts to allow the user to try again
+
+        if seats[row_text][column_text] == "F": # If the seat is free/'F', book only if it is valid (It is, we checked in previous lines/statements)
+            seats[row_text][column_text] = "R" # Set as 'R'/Reserved
+            user_seats[seat_location] = (row_text, column_text) # Add to the list of seats that the user has booked
+            print(f"\n[green]Seat {row_text}{column_text} booked successfully![/green]") # Inform user about successful booking!
+            break # Break out of the while loop statement and back to the menu
+
+        else: # Using a match case inside an else statement for better readability
+            match seats[row_text][column_text]: # Depending on seat's status / Anything other than 'F'/Free
+                case "R": # If the seat is reserved
+                    print(f"\n[red]Seat at {row_text}{column_text} is already reserved.[/red]") # inform...
+                case "X": # If the seat is an aisle, which is logically unbookable in modern aircrafts
+                    print(f"\n[red]Seat at {row_text}{column_text} is an aisle, please choose a valid free seat.[/red]") # inform...
+                case "S": # If the seat is in a storage area
+                    print(f"\n[red]Seat at {row_text}{column_text} is storage.[/red]") # inform...
+                case _: # If the seat cannot be booked for no reason, (This condition will likely never get raised)
+                    print(f"\n[red]Seat at {row_text}{column_text} cannot be booked.[/red]") # inform...
+
+def user_booked():
+    print("\n[blue]Your booked seats:[/blue]") # Display the user's booked seats
+
+    if not user_seats: # If there aren't any seats booked by the user...
+        print("[yellow]No seats booked yet.[/yellow]") # Then inform them.
+    else: # But if there are...
+        for seat, (row, column) in user_seats.items(): # Display the seats booked by the user
+            print(f"[green]{seat}[/green]") # Output the ones that are available
+
 
 
 def free(): # This function will allow users to free a seat that was booked, marked 'R'
-    pass
+    while True: # Loop through code below until otherwise when everything goes accordingly right without user error
+        user_booked() # Display the seats that the user has booked
+        seat_location = input("\n" + "Enter a seat you booked that you wish to free or enter 'X' to exit: ").strip().upper() # Prompt user to enter, uses methods to format input
 
-def status(): # This function display the seating plan for the aircraft and it also provides a list of the user's booked seats
-    pass
-    
+        if seat_location == "X": # If user input 'X' then they wish to exit
+            print("\n" + "[red]Exiting free page...[/red]") # Inform the user of exit
+            break # Breaks out of the while loop and enters back into the main main
+
+        if seat_location not in user_seats: # If they tried to free a seat that is not booked by them.
+            print("\n" + error["invalid"] + " " + "[red]You have not booked this seat[/red]") # Inform...
+            continue # Continue...
+
+        row, column = user_seats[seat_location] # "Grab the location*   "
+
+        if seats[row][column] == "R": # If the seat is Reserved...
+            seats[row][column] = "F" # Then free it.
+            del user_seats[seat_location] # Delete from the dictionary of booked seats
+
+            print(f"\n[green]Seat at {seat_location} has now been freed.[/green]") # inform...
+            break # Break...
+        else: # Else...
+            print(f"\n[red]Seat at {seat_location} is not reserved.[/red]") # inforn...
+
+def check(): # Simply check status
+    status() # Show current seating plan 
+    user_booked() # Show user's booked seat
 
 # Intializing a dictionary to call functions depending on user input
 ability = {'1' : check, # calls check()
@@ -118,7 +167,7 @@ ability = {'1' : check, # calls check()
 # The main function of this module, it manages actions, data and it displays the main menu
 def run(): # The run() function does not take any argument or return any value when called    
     while True: # Continue running the code inside the while statement unless commanded otherwise
-        print("\n" + "Welcome to the Apache Airlines booking system!")
+        print("\n" + "Welcome to the Apache Airlines booking system!") # Display a welcome message
 
         for i, key in enumerate(option, start = 1): # We can use enumerate for easily iterating through a dictionary
             print(str(i) + ' - ' + option[key]) # String Concatenation, turn i/index into a string value in this statement
