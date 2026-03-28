@@ -19,7 +19,8 @@ message = {"welcome" : "Welcome to the Apache Airlines booking system!",
 option = {"check": "[green]Check availability of seats[/green]",
           "book": "[blue]Enter seat booking[/blue]",
           "free": "[yellow]Free booked seats[/yellow]",
-          "status": "[orange1]Show seat booking status[/orange1]",
+          "status" : "[orange1]Show seat booking status[/orange1]",
+          "note" : "[bright_magenta]Add a note for accessibility[/bright_magenta]",
           "exit": "[bright_red]Exit the program[/bright_red]"}
 
 # A dictionary to store strings that are options/messages to be displayed terminal output
@@ -158,11 +159,18 @@ def check(): # Simply check status
     status() # Show current seating plan 
     user_booked() # Show user's booked seat
 
+
+def note(): # Abilty to add a note to request accessibility support from Apache Airlines
+    print("You can add a note if you require accessibility or support.")
+    print("Current Note: " + user_note) # Display the user's note
+    user_note = input("Enter a new note: ") # User enters a new note
+
 # Intializing a dictionary to call functions depending on user input
 ability = {'1' : check, # calls check()
            '2' : book, # calls book()
            '3' : free, # calls free()
-           '4' : status} # calls status()
+           '4' : status, # calls status()
+           '5' : note} 
 
 # The main function of this module, it manages actions, data and it displays the main menu
 def run(): # The run() function does not take any argument or return any value when called    
@@ -177,7 +185,7 @@ def run(): # The run() function does not take any argument or return any value w
         try: # Try converting input into an integer, to make sure it is valid
             choice = int(choice) # Try converting the user input for item choice into an integer
         except ValueError: # If it fails, then allow them to try again and inform them properly
-            print("\n" + error["invalid"] + ' ' + "[red]Please enter a number (1 - 5)[/red]") # Error and explanation
+            print("\n" + error["invalid"] + ' ' + "[red]Please enter a number (1 - 6)[/red]") # Error and explanation
             continue # Restarts the while loop from the beginning   
 
         # If user input of chosen list item number is 1 to 4, call a function depending on the key value (abilty dictionary)
@@ -185,11 +193,11 @@ def run(): # The run() function does not take any argument or return any value w
             ability[str(choice)]() # If true -> call the function based on the key's value, except we need a string value so we used str() to access dictionary indexing. Alternatively, we could remove quotes from the keys
             continue # Go back to the menu, which restarts the current while loop
 
-        elif choice == 5: # If 5 is inputted, then the user wishes to exit
+        elif choice == 6: # If 6 is inputted, then the user wishes to exit
             print("\n" + message["goodbye"])
             break # Exit out of the while loop and end the program
         else: # If input is invalid, let user know and go through the while loop again
-            print("\n" + error["invalid"] + ' ' + "[red]Please enter a number (1 - 5)[/red]") # Prints error message
+            print("\n" + error["invalid"] + ' ' + "[red]Please enter a number (1 - 6)[/red]") # Prints error message
             continue # Continues the while True loop statement
 
 # Creating the seating plan for the Burak 757, set all seats to either 'F'/Free or 'X'/Aisle or 'S'/Storage. In this stage, there will be no booked spaces, therefore no 'R'/Reserved
